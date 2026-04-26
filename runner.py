@@ -6,12 +6,23 @@ GitHub Actions 定时运行入口
 
 import os, sys, json
 
-# 从环境变量读取飞书 Webhook
-FEISHU_WEBHOOK = os.environ.get('FEISHU_WEBHOOK', '')
-
-# 导入主模块
+# 导入主模块 (必须先导入, 才能访问 CONFIG)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from crypto_quant import *
+
+# ─── 配置: CI模式 (CPU, 快速) ────────────────────────────────────
+CONFIG['model_type'] = 'gru'
+CONFIG['epochs'] = 100
+CONFIG['hidden_dim'] = 32  # 更小模型加速CPU推理
+CONFIG['total_candles'] = 5000
+CONFIG['device'] = 'cpu'
+
+print(f"CI模式: model={CONFIG['model_type']}, "
+      f"epochs={CONFIG['epochs']}, "
+      f"device={CONFIG['device']}")
+
+# 从环境变量读取飞书 Webhook
+FEISHU_WEBHOOK = os.environ.get('FEISHU_WEBHOOK', '')
 
 def feishu_notify(signals: dict, backtest_result=None):
     """发送信号结果到飞书机器人"""
