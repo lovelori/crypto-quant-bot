@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+*.pyo
+ssh_public_key.txt
+.DS_Store
